@@ -22,16 +22,18 @@
  */
 -->
 <configuration>
-<property>
-  <name>hbase.cluster.distributed</name>
-  <value>true</value>
-  </property>
-<property>
-  <name>hbase.rootdir</name>
-  <value>hdfs://desktop6:8020/hbase</value>
-  </property>
-<property>
-    <name>hbase.zookeeper.quorum</name>
-    <value>desktop6</value>
-    </property>
+<!--  
+	<property>
+		<name>hbase.cluster.distributed</name>
+		<value>true</value>
+	</property>
+	<property>
+  		<name>hbase.rootdir</name>
+  		<value>hdfs://desktop6:8020/hbase</value>
+  	</property>
+	<property>
+    	<name>hbase.zookeeper.quorum</name>
+    	<value>desktop6</value>
+   	</property>
+-->  
 </configuration>

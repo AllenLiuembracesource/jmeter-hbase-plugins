@@ -32,15 +32,19 @@ public class HbaseJMeter extends AbstractJavaSamplerClient {
 	private String values =null ;
 	/*是否记录日志*/
 	private  boolean writeToWAL = true ;
+	private  boolean keyRondom = true;
 	/**
 	 * 初始化配置
 	 */
-	static {
-		conf = HBaseConfiguration.create();
-	}
+//	static {
+//		conf = HBaseConfiguration.create();
+//	}
 	@Override
 	public void setupTest(JavaSamplerContext context) {
 		super.setupTest(context);
+		String hbaseZK = context.getParameter("hbase.zookeeper.quorum");
+		conf = HBaseConfiguration.create();
+		conf.set("hbase.zookeeper.quorum", hbaseZK);
 		if (table == null) {
 			String tableName = context.getParameter("tableName");
 			byte[] tableNamebyte = tableName.getBytes();
@@ -74,12 +78,21 @@ public class HbaseJMeter extends AbstractJavaSamplerClient {
 		if( writeToWAL == true ){
 			writeToWAL = Boolean.valueOf(context.getParameter("writeToWAL"));
 		}
+		
+		if( keyRondom == true ){
+			keyRondom = Boolean.valueOf(context.getParameter("keyRondom"));
+		}
 	}
 
 	public SampleResult runTest(JavaSamplerContext context) {
 		SampleResult sampleResult = new SampleResult();
 		sampleResult.sampleStart();
-		String key = String.valueOf(String.valueOf(new Random().nextInt(keyNumLength)).hashCode());
+		String key = null ;
+		if(keyRondom){
+			key = String.valueOf(String.valueOf(new Random().nextInt(keyNumLength)).hashCode());
+		}else{
+			key = String.valueOf(SequenceKey.getsequenceKey());
+		}
 		
 		try {
 			if (methedType.equals("put")) {
@@ -111,7 +124,8 @@ public class HbaseJMeter extends AbstractJavaSamplerClient {
 	public Arguments getDefaultParameters() {
 		Arguments params = new Arguments();
 		params.addArgument("putOrget", "put");
-		params.addArgument("keyNumLength", "5");
+		params.addArgument("keyNumLength", "10000000");
+		params.addArgument("keyRondom", "true");
 		params.addArgument("valueLength", "1000");
 		params.addArgument("cf", "cf");
 		params.addArgument("qualifier", "a");
@@ -120,6 +134,7 @@ public class HbaseJMeter extends AbstractJavaSamplerClient {
 		params.addArgument("writeBufferSize","2097152");
 		params.addArgument("writeToWAL","true");
 		params.addArgument("poolSize","500");
+		params.addArgument("hbase.zookeeper.quorum","192.168.0.149");
 		return params;
 	}
 
